@@ -1051,6 +1051,10 @@ fn status_callbacks() {
     server
         .ctx()
         .set_status_callback(|ssl| {
+            assert_eq!(
+                ssl.get_status_type().unwrap().as_raw(),
+                StatusType::OCSP.as_raw()
+            );
             CALLED_BACK_SERVER.store(true, Ordering::SeqCst);
             let response = OcspResponse::create(OcspResponseStatus::UNAUTHORIZED, None).unwrap();
             let response = response.to_der().unwrap();

@@ -29,6 +29,11 @@ pub unsafe fn SSL_set_tlsext_host_name(s: *mut SSL, name: *mut c_char) -> c_long
     )
 }
 
+#[cfg(any(ossl110, libressl341))]
+pub unsafe fn SSL_get_tlsext_status_type(s: *mut SSL) -> c_long {
+    SSL_ctrl(s, SSL_CTRL_GET_TLSEXT_STATUS_REQ_TYPE, 0, ptr::null_mut())
+}
+
 pub unsafe fn SSL_set_tlsext_status_type(s: *mut SSL, type_: c_int) -> c_long {
     SSL_ctrl(
         s,

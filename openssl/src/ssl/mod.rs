@@ -2840,6 +2840,20 @@ impl SslRef {
         unsafe { ffi::SSL_session_reused(self.as_ptr()) != 0 }
     }
 
+    /// Returns the status response a client wishes the server to reply with.
+    ///
+    /// Returns `None` if the status was not set by the client
+    #[corresponds(SSL_get_tlsext_status_type)]
+    #[cfg(any(ossl110, libressl341))]
+    pub fn get_status_type(&mut self) -> Option<StatusType> {
+        unsafe {
+            match ffi::SSL_get_tlsext_status_type(self.as_ptr()) as c_int {
+                -1 => None,
+                ret => Some(StatusType::from_raw(ret)),
+            }
+        }
+    }
+
     /// Sets the status response a client wishes the server to reply with.
     #[corresponds(SSL_set_tlsext_status_type)]
     pub fn set_status_type(&mut self, type_: StatusType) -> Result<(), ErrorStack> {
